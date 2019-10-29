@@ -10,7 +10,7 @@ router.get('/', (req, res) => {
   })
   .catch(error => {
     console.log(error);
-    res.status(500).json({error: "The posts information could not be retrieved."})
+    res.status(500).json({errorMessage: "The posts information could not be retrieved."})
   })
 });
 
@@ -50,7 +50,7 @@ router.post('/', (req, res) => {
   })
 })
 
-//GETs comments from post with specific "id"--> Confused returns the post
+//GETs all comments with the "post_id" 
 router.get('/:id/comments', (req, res) => {
 
   db.findPostComments(req.params.id)
@@ -62,8 +62,33 @@ router.get('/:id/comments', (req, res) => {
     }
   })
   .catch(error => {
-    res.status(500).json({ error: "The comments information could not be retrieved." })
+    res.status(500).json({ errorMessage: "The comments information could not be retrieved." })
   })
 })
+
+//Creates a comment for the post with the specified id
+router.post('/:id/comments', (req, res) => {
+  
+  const newComment = req.body;
+
+  if (!req.params.id) {
+    res.status(404).json({errorMessage: "The post with the specified ID does not exist"});
+  } else {
+    if (!newComment.text) {
+      res.status(400).json({errorMessage: "Please provide text for the comment."});
+      return
+    }
+  }
+  
+  db.insertComment(newComment)
+  .then(comment => {
+    db.findCommentById(comment.id).then(updatedComment => {
+      res.json(updatedComment)
+    })
+  })
+  .catch(error => {
+    res.status(500).json({ errorMessage: "There was an error while saving the comment to the database." })
+  });
+});
 
 module.exports = router;

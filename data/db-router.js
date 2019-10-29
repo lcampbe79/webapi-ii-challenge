@@ -79,7 +79,7 @@ router.post('/:id/comments', (req, res) => {
       return
     }
   }
-  
+
   db.insertComment(newComment)
   .then(comment => {
     db.findCommentById(comment.id).then(updatedComment => {
@@ -90,5 +90,81 @@ router.post('/:id/comments', (req, res) => {
     res.status(500).json({ errorMessage: "There was an error while saving the comment to the database." })
   });
 });
+
+//Updates post
+// router.put('/:id', (req, res) => {
+//   const id = req.params.id;
+//   const post = req.body;
+
+//   if (!post.id) {
+//     res.status(404).json({errorMessage: "The post with the specified ID does not exist." })
+//   } else {
+//     if (!post.title || !post.contents) {
+//       res.status(400).json({errorMessage: "Please provide title and contents for the post." })
+//       return
+//     }
+//   }
+
+//   db.update(id, post)
+//   .then(updatedPost => {
+//     db.findById(id).then(updatedPost => {
+//       res.json(updatedPost)
+//     })
+//   })
+//   .catch(err => {
+//     res.status(500).json({errorMessage: "The post information could not be modified."})
+//   })
+// })
+
+// router.put('/:id', (req, res) => {
+//   const id = req.params.id;
+//   const post = req.body;
+
+//   if (!post.id) {
+//     res.status(404).json({errorMessage: "The user with the specified ID does not exist." })
+//   } else {
+//     if (!post.title || !post.contenst) {
+//       res.status(400).json({errorMessage: "Please provide name and bio for the user." })
+//       return
+//     }
+//   }
+
+//   db.update(id, post)
+//   .then(updatedPost => {
+//     db.findById(id).then(updatedPost => {
+//       res.json(updatedPost)
+//     })
+//   })
+//   .catch(err => {
+//     res.status(500).json({errorMessage: "The user information could not be modified."})
+//   })
+// })
+
+//DELETE
+router.delete('/:id', (req, res) => {
+  const {id} = req.params;
+
+  db.findById(id)
+  .then(post => {
+    if (post.length > 0) {
+      res.status(404).json({message: "The post with the specified ID does not exist."})
+    }
+  })
+  .catch(err => {
+    res.status(500).json({error: "The post with the idea could not be retrieved."})
+  })
+
+  db.remove(id)
+  .then(post => {
+    if (post) {
+      res.status(200).json(post)
+    } else {
+      res.status(404).json({errorMessage: "The post with the specified ID does not exist."})
+    }
+  })
+  .catch(err => {
+    res.status(500).json({errorMessage: "The post could not be removed."})
+  })
+})
 
 module.exports = router;

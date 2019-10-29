@@ -50,7 +50,7 @@ router.post('/', (req, res) => {
   })
 })
 
-//GETs comments from post with specific "id"
+//GETs comments from post with specific "id"--> Confused returns the post
 router.get('/:id/comments', (req, res) => {
 
   db.findPostComments(req.params.id)

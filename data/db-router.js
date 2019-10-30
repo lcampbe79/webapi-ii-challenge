@@ -146,8 +146,10 @@ router.delete('/:id', (req, res) => {
 
   db.findById(id)
   .then(post => {
-    if (post.length > 0) {
+    console.log(post)
+    if (post.length === 0) {
       res.status(404).json({message: "The post with the specified ID does not exist."})
+      return
     }
   })
   .catch(err => {
@@ -160,6 +162,7 @@ router.delete('/:id', (req, res) => {
       res.status(200).json(post)
     } else {
       res.status(404).json({errorMessage: "The post with the specified ID does not exist."})
+      return
     }
   })
   .catch(err => {
